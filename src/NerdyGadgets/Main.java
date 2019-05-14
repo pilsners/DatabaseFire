@@ -4,6 +4,10 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.nio.file.attribute.FileAttribute;
+import java.nio.file.attribute.PosixFilePermission;
+import java.nio.file.attribute.PosixFilePermissions;
+import java.security.Permission;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -79,13 +83,16 @@ public class Main {
     public static void setFile(){
         File f = new File("getData.sh");
 
-        List<String> lines = Arrays.asList("grep 'cpu ' /proc/stat | awk '{usage=($2+$4)*100/($2+$4+$5)} END {print usage}'");
-        //Files.write("../", lines, StandardOpenOption.APPEND);
-        try{
-            Files.write(Paths.get("getData.sh"), lines, StandardOpenOption.CREATE);
-            f.setExecutable(true);
-        }catch (IOException e){
-            System.out.println(e.getMessage());
+        if(!f.exists()){
+            List<String> lines = Arrays.asList("grep 'cpu ' /proc/stat | awk '{usage=($2+$4)*100/($2+$4+$5)} END {print usage}'");
+            try{
+
+                Files.write(Paths.get("getData.sh"), lines, StandardOpenOption.CREATE);
+            }catch (IOException e) {
+                System.out.println(e.getMessage());
+            }
+
+
         }
 
 
@@ -101,6 +108,9 @@ public class Main {
         }catch (FileNotFoundException e){
             List<String> lines = Arrays.asList("serverID=", "databaseLookback=20");
             try{
+                conf.setExecutable(true);
+                conf.setReadable(true);
+                conf.setWritable(true);
                 Files.write(Paths.get("serverStatus.config"), lines, StandardOpenOption.CREATE);
                 System.out.println("Please fill in the config file!");
             }catch (IOException ef){
