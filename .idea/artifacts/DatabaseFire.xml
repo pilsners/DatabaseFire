@@ -2,9 +2,8 @@
   <artifact type="jar" name="DatabaseFire">
     <output-path>$PROJECT_DIR$/../Desktop/JAVA KBS Jar</output-path>
     <root id="archive" name="DatabaseFire.jar">
-      <element id="directory" name="META-INF">
-        <element id="file-copy" path="$PROJECT_DIR$/META-INF/MANIFEST.MF" />
-      </element>
+      <element id="module-output" name="DatabaseFire" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/../Documents/mysql-connector-java-8.0.15.jar" path-in-jar="/" />
     </root>
   </artifact>
 </component>
