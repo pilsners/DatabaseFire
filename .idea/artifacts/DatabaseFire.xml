@@ -1,0 +1,10 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="DatabaseFire">
+    <output-path>$PROJECT_DIR$/../Desktop/JAVA KBS Jar</output-path>
+    <root id="archive" name="DatabaseFire.jar">
+      <element id="directory" name="META-INF">
+        <element id="file-copy" path="$PROJECT_DIR$/META-INF/MANIFEST.MF" />
+      </element>
+    </root>
+  </artifact>
+</component>

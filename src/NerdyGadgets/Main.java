@@ -37,9 +37,10 @@ public class Main {
                 System.out.println("Processor load: " + getProcessCpuLoad());
                 PreparedStatement p = Conn.connection.prepareStatement("INSERT INTO ComponentStatus (componentID, uptime, processorStatus, availableStorage, lastUpdate) VALUES ("+serverID+", 90," + getProcessCpuLoad() + ", 5, '" + curTime + "')");
                 p.executeUpdate();
-                ResultSet rs = Conn.connection.createStatement().executeQuery("SELECT COUNT(componentID) Amount FROM ComponentStatus WHERE componentID = " + serverID);
+                ResultSet rs = Conn.connection.createStatement().executeQuery("INSERT INTO ComponentStatus_archive SELECT * FROM ComponentStatus WHERE componentID = "+serverID+" ORDER BY lastUpdate ASC LIMIT 1;DELETE FROM ComponentStatus WHERE componentID = "+serverID+" ORDER BY lastUpdate ASC LIMIT 1;");
                 if(rs.next()){
                     if(rs.getInt("Amount") > databaseLookback){
+
                         PreparedStatement rm = Conn.connection.prepareStatement("DELETE FROM ComponentStatus WHERE componentID = " + serverID + " ORDER BY lastUpdate ASC LIMIT 1");
                         rm.executeUpdate();
                     }
