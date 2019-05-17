@@ -4,15 +4,12 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
-import java.nio.file.attribute.FileAttribute;
-import java.nio.file.attribute.PosixFilePermission;
-import java.nio.file.attribute.PosixFilePermissions;
-import java.security.Permission;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.*;
+import java.util.stream.Collectors;
 
 
 public class Main {
@@ -38,8 +35,10 @@ public class Main {
         public void run(){
             Timestamp curTime = new Timestamp(new Date().getTime());
             try{
-                System.out.println("Processor load: " + getProcessCpuLoad());
-                PreparedStatement p = Conn.connection.prepareStatement("INSERT INTO ComponentStatus (componentID, uptime, processorStatus, availableStorage, lastUpdate) VALUES ("+serverID+", 90," + getProcessCpuLoad() + ", 5, '" + curTime + "')");
+                System.out.println("Processor load: " + getData().get(0));
+                System.out.println("Storage available: " + getData().get(1));
+                System.out.println("Storage total: " + getData().get(2));
+                PreparedStatement p = Conn.connection.prepareStatement("INSERT INTO ComponentStatus (componentID, processorStatus, availableStorage, totalStorage, lastUpdate) VALUES ("+serverID+"," + getData().get(0) + ", "+getData().get(1)+", "+getData().get(2)+", '" + curTime + "')");
                 p.executeUpdate();
                 ResultSet rs = Conn.connection.createStatement().executeQuery("SELECT COUNT(componentID) Amount FROM ComponentStatus WHERE componentID = " + serverID);
                 if(rs.next()){
@@ -61,8 +60,8 @@ public class Main {
     }
 
 
-    public static double getProcessCpuLoad() {
-        String list = new String();
+    public static ArrayList<Double> getData() {
+        ArrayList<Double> list = new ArrayList<>();
         ProcessBuilder builder = new ProcessBuilder(System.getProperty("user.dir") + "/getData.sh");
 
         try{
@@ -71,20 +70,24 @@ public class Main {
 
             BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
 
-            list = reader.readLine();
+            List<String> l = reader.lines().collect(Collectors.toList());
+            for(String s : l){
+                list.add(Double.parseDouble(s));
+            }
 
         }catch (Exception e){
             System.out.println(e.getMessage());
         }
 
-        return Double.parseDouble(list);
+        return list;
     }
+
 
     public static void setFile(){
         File f = new File("getData.sh");
 
         if(!f.exists()){
-            List<String> lines = Arrays.asList("grep 'cpu ' /proc/stat | awk '{usage=($2+$4)*100/($2+$4+$5)} END {print usage}'");
+            List<String> lines = Arrays.asList("#!/bin/bash", "grep 'cpu ' /proc/stat | awk '{usage=($2+$4)*100/($2+$4+$5)} END {print usage}'","df -h --total | grep 'total' | awk '{print $4}' | tr -d GM", "df -h --total | grep 'total' | awk '{print $2}' | tr -d GM");
             try{
 
                 Files.write(Paths.get("getData.sh"), lines, StandardOpenOption.CREATE);
