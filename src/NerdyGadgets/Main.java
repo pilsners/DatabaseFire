@@ -15,6 +15,7 @@ import java.util.stream.Collectors;
 public class Main {
     private static int serverID;
     private static int databaseLookback;
+    public static String DBServerAddress;
 
     public static void main(String[] args) {
 
@@ -109,7 +110,7 @@ public class Main {
         try{
             is = new FileInputStream("serverStatus.config");
         }catch (FileNotFoundException e){
-            List<String> lines = Arrays.asList("serverID=", "databaseLookback=20");
+            List<String> lines = Arrays.asList("serverID=", "databaseLookback=20", "DBServerAddress=localhost");
             try{
                 conf.setExecutable(true);
                 conf.setReadable(true);
@@ -134,6 +135,8 @@ public class Main {
         try{
             serverID = Integer.parseInt(prop.getProperty("serverID"));
             databaseLookback = Integer.parseInt(prop.getProperty("databaseLookback"));
+            DBServerAddress = prop.getProperty("DBServerAddress");
+
         }catch(NumberFormatException e){
             System.out.println("Make sure your put an interger in the serverStatus.conf serverID or databaseLookback property");
             return false;

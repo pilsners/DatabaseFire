@@ -13,7 +13,7 @@ public class Conn {
             return connection;
         }
         try {
-            connection = DriverManager.getConnection("jdbc:mysql://145.44.234.98:3306/KBSB?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC", "db", "kbsICTM2m1");
+            connection = DriverManager.getConnection("jdbc:mysql://"+Main.DBServerAddress+":3306/KBSB?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC", "db", "kbsICTM2m1");
         } catch (Exception e) {
             System.out.println(e + " at " + e.getStackTrace()[0].getLineNumber());
         }
