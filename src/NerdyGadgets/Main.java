@@ -16,12 +16,14 @@ public class Main {
     private static int serverID;
     private static int databaseLookback;
     public static String DBServerAddress;
+    private static String username;
+    private static String password;
 
     public static void main(String[] args) {
 
         if(getConfig()){
             setFile();
-            Conn.getConnection();
+            Conn.getConnection(username, password);
 
             Timer t = new Timer();
             t.schedule(new Fire(), 0, 5000);
@@ -54,6 +56,7 @@ public class Main {
                 }
             }catch(SQLException e){
                 System.out.println(e.getMessage());
+
             }catch(Exception f){
                 System.out.println(f.getMessage());
             }
@@ -110,7 +113,7 @@ public class Main {
         try{
             is = new FileInputStream("serverStatus.config");
         }catch (FileNotFoundException e){
-            List<String> lines = Arrays.asList("serverID=", "databaseLookback=20", "DBServerAddress=localhost");
+            List<String> lines = Arrays.asList("serverID=", "databaseLookback=20", "DBServerAddress=localhost", "dbUsername=", "dbPassword=");
             try{
                 conf.setExecutable(true);
                 conf.setReadable(true);
@@ -136,6 +139,8 @@ public class Main {
             serverID = Integer.parseInt(prop.getProperty("serverID"));
             databaseLookback = Integer.parseInt(prop.getProperty("databaseLookback"));
             DBServerAddress = prop.getProperty("DBServerAddress");
+            username = prop.getProperty("dbUsername");
+            password = prop.getProperty("dbPassword");
 
         }catch(NumberFormatException e){
             System.out.println("Make sure your put an interger in the serverStatus.conf serverID or databaseLookback property");
